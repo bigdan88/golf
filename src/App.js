@@ -2,6 +2,14 @@ import logo from './logo.svg';
 import './App.css';
 import * as React from 'react';
 
+
+import { Amplify, API, graphqlOperation } from 'aws-amplify'
+import { createPlayer } from './graphql/mutations'
+import { listPlayers } from './graphql/queries'
+
+import { withAuthenticator, Button, Heading, Text, TextField, View } from '@aws-amplify/ui-react';
+import '@aws-amplify/ui-react/styles.css';
+
 import { styled, createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import MuiDrawer from '@mui/material/Drawer';
@@ -12,18 +20,22 @@ import List from '@mui/material/List';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
-import Badge from '@mui/material/Badge';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import Link from '@mui/material/Link';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import NotificationsIcon from '@mui/icons-material/Notifications';
 import { mainListItems, secondaryListItems } from './listItems';
+
 import Chart from './Chart';
 import Deposits from './Deposits';
 import Orders from './Orders';
+
+import awsExports from "./aws-exports";
+Amplify.configure(awsExports);
+
+const initialState = { name: '', description: '' }
 
 function Copyright(props) {
   return (
@@ -86,11 +98,41 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 
 const mdTheme = createTheme();
 
-function DashboardContent() {
+function DashboardContent( { signOut, user }) {
+  const [formState, setFormState] = React.useState(initialState)
+  const [todos, setTodos] = React.useState([])
   const [open, setOpen] = React.useState(true);
   const toggleDrawer = () => {
     setOpen(!open);
   };
+
+  React.useEffect(() => {
+    fetchTodos()
+  }, [])
+
+  function setInput(key, value) {
+    setFormState({ ...formState, [key]: value })
+  }
+
+  async function fetchTodos() {
+    try {
+      const todoData = await API.graphql(graphqlOperation(listPlayers))
+      const todos = todoData.data.listPlayers.items
+      setTodos(todos)
+    } catch (err) { console.log('error fetching todos') }
+  }
+
+  async function addTodo() {
+    try {
+      if (!formState.name || !formState.description) return
+      const todo = { ...formState }
+      setTodos([...todos, todo])
+      setFormState(initialState)
+      await API.graphql(graphqlOperation(createPlayer, {input: todo}))
+    } catch (err) {
+      console.log('error creating todo:', err)
+    }
+  }
 
   return (
     <ThemeProvider theme={mdTheme}>
@@ -114,6 +156,7 @@ function DashboardContent() {
             >
               <MenuIcon />
             </IconButton>
+            <img src="/Lincoln_Lab_icon.png" alt="logo" height="30px" width="auto" sx={{ marginRight: '12px' }} />
             <Typography
               component="h1"
               variant="h6"
@@ -123,20 +166,7 @@ function DashboardContent() {
             >
               MIT Lincoln Lab Monday Night Golf League
             </Typography>
-            <Typography
-              component="h1"
-              variant="h6"
-              color="inherit"
-              noWrap
-              sx={{ flexGrow: 1 }}
-            >
-              MIT Lincoln Lab Monday Night Golf League
-            </Typography>
-            <IconButton color="inherit">
-              <Badge badgeContent={4} color="secondary">
-                <NotificationsIcon />
-              </Badge>
-            </IconButton>
+            <Button color="inherit">Login/Register</Button>
           </Toolbar>
         </AppBar>
         <Drawer variant="permanent" open={open}>
@@ -210,13 +240,47 @@ function DashboardContent() {
             <Copyright sx={{ pt: 4 }} />
           </Container>
         </Box>
+        <View style={styles.container}>
+          <Heading level={1}>Hello {user.username}</Heading>
+          <Button onClick={signOut}>Sign out</Button>
+          <h2>Amplify Todos</h2>
+          <TextField
+            placeholder="Name"
+            onChange={event => setInput('name', event.target.value)}
+            style={styles.input}
+            defaultValue={formState.name}
+          />
+          <TextField
+            placeholder="Description"
+            onChange={event => setInput('description', event.target.value)}
+            style={styles.input}
+            defaultValue={formState.description}
+          />
+          <Button style={styles.button} onClick={addTodo}>Create Todo</Button>
+          {
+            todos.map((todo, index) => (
+              <View key={todo.id ? todo.id : index} style={styles.todo}>
+                <Text style={styles.todoName}>{todo.name}</Text>
+                <Text style={styles.todoDescription}>{todo.description}</Text>
+              </View>
+            ))
+          }
+        </View>
       </Box>
     </ThemeProvider>
   );
 }
 
-export default function App() {
-  return <DashboardContent />;
+const styles = {
+  container: { width: 400, margin: '0 auto', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: 20 },
+  todo: {  marginBottom: 15 },
+  input: { border: 'none', backgroundColor: '#ddd', marginBottom: 10, padding: 8, fontSize: 18 },
+  todoName: { fontSize: 20, fontWeight: 'bold' },
+  todoDescription: { marginBottom: 0 },
+  button: { backgroundColor: 'black', color: 'white', outline: 'none', fontSize: 18, padding: '12px 0px' }
 }
 
+export default withAuthenticator(function App(signOut, user) {
+  return <DashboardContent />;
+});
 // export default App;

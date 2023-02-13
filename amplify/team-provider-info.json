@@ -1,0 +1,23 @@
+{
+  "staging": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-amplify698dd959dc434-staging-22924-authRole",
+      "UnauthRoleArn": "arn:aws:iam::625409386306:role/amplify-amplify698dd959dc434-staging-22924-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::625409386306:role/amplify-amplify698dd959dc434-staging-22924-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-amplify698dd959dc434-staging-22924-deployment",
+      "UnauthRoleName": "amplify-amplify698dd959dc434-staging-22924-unauthRole",
+      "StackName": "amplify-amplify698dd959dc434-staging-22924",
+      "StackId": "arn:aws:cloudformation:us-east-1:625409386306:stack/amplify-amplify698dd959dc434-staging-22924/678bcfd0-a758-11ed-9335-12132830c079",
+      "AmplifyAppId": "d350wcpy4s9eez"
+    },
+    "categories": {
+      "auth": {
+        "golf6f17989a": {}
+      },
+      "api": {
+        "golf": {}
+      }
+    }
+  }
+}
