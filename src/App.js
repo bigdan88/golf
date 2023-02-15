@@ -8,7 +8,7 @@ import { createPlayer } from './graphql/mutations'
 import { listPlayers } from './graphql/queries'
 
 import { withAuthenticator, Button, Heading, Text, TextField, View } from '@aws-amplify/ui-react';
-import '@aws-amplify/ui-react/styles.css';
+// import '@aws-amplify/ui-react/styles.css';
 
 import { styled, createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
