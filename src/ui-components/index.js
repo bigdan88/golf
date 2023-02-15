@@ -5,7 +5,5 @@
  **************************************************************************/
 
 export { default as studioTheme } from "./studioTheme";
-export { default as PlayerCreateForm } from "./PlayerCreateForm";
-export { default as PlayerUpdateForm } from "./PlayerUpdateForm";
-export { default as GolfRound9CreateForm } from "./GolfRound9CreateForm";
-export { default as GolfRound9UpdateForm } from "./GolfRound9UpdateForm";
+export { default as GameCreateForm } from "./GameCreateForm";
+export { default as GameUpdateForm } from "./GameUpdateForm";

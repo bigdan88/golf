@@ -1,3 +1,18 @@
+type Game @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  date: AWSDate
+  Teams: [Team] @hasMany(indexName: "byGame", fields: ["id"])
+  GolfRound9s: [GolfRound9] @hasMany(indexName: "byGame", fields: ["id"])
+  got_cancelled: Boolean
+}
+
+type Team @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  team_name: String
+  Players: [Player] @hasMany(indexName: "byTeam", fields: ["id"])
+  gameID: ID! @index(name: "byGame")
+}
+
 type Player @model @auth(rules: [{allow: public}]) {
   id: ID!
   first_name: String!
@@ -16,18 +31,23 @@ type Player @model @auth(rules: [{allow: public}]) {
   subs_mondays: Boolean
   plays_wednesdays: Boolean
   subs_wednesdays: Boolean
+  is_union: Boolean
+  teamID: ID! @index(name: "byTeam")
+  Team: Team @belongsTo(fields: ["teamID"])
 }
 
 type GolfRound9 @model @auth(rules: [{allow: public}]) {
   id: ID!
-  date: AWSDate!
-  hole1: String
-  hole2: String
-  hole3: String
-  hole4: String
-  hole5: String
-  hole6: String
-  hole7: String
-  hole8: String
-  hole9: String
+  hole1: Int
+  hole2: Int
+  hole3: Int
+  hole4: Int
+  hole5: Int
+  hole6: Int
+  hole7: Int
+  hole8: Int
+  hole9: Int
+  Player: Player @hasOne
+  gameID: ID! @index(name: "byGame")
 }
+ 
