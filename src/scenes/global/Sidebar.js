@@ -4,7 +4,7 @@ import { Box, IconButton, Typography, useTheme } from "@mui/material";
 import {BrowserRouter as Router, Route, Link, Routes} from 'react-router-dom';
 // import { Link } from "react-router-dom";
 import "react-pro-sidebar/dist/css/styles.css";
-import { tokens } from "../../../theme";
+import { tokens } from "../../theme";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import PeopleOutlinedIcon from "@mui/icons-material/PeopleOutlined";
 import ContactsOutlinedIcon from "@mui/icons-material/ContactsOutlined";
@@ -33,10 +33,8 @@ const Item = ({ title, to, icon, selected, setSelected }) => {
       onClick={() => setSelected(title)}
       icon={icon}
     >
-    <Router> 
       <Typography>{title}</Typography>
       <Link to={to} />
-    </Router> 
     </MenuItem>
   );
 };
@@ -50,6 +48,11 @@ const Sidebar = () => {
   return (
     <Box
       sx={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        bottom: 0,
+        width: "250px",
         "& .pro-sidebar-inner": {
           background: `${colors.primary[400]} !important`,
         },
@@ -86,7 +89,7 @@ const Sidebar = () => {
                 ml="15px"
               >
                 <Typography variant="h3" color={colors.grey[100]}>
-                  ADMINIS
+                  LL Golf
                 </Typography>
                 <IconButton onClick={() => setIsCollapsed(!isCollapsed)}>
                   <MenuOutlinedIcon />
