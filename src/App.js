@@ -16,7 +16,6 @@ import { CssBaseline, ThemeProvider } from "@mui/material";
 import { ColorModeContext, useMode } from "./theme";
 // import Calendar from "./scenes/calendar/calendar";
 
-import { withAuthenticator, Button, Heading, Text, TextField, View } from '@aws-amplify/ui-react';
 import { Amplify, API, graphqlOperation } from 'aws-amplify'
 import { Auth } from 'aws-amplify';
 
@@ -55,4 +54,4 @@ function App() {
   );
 }
 
-export default withAuthenticator(App);
+export default App;
