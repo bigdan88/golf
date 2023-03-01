@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
 import Topbar from "./scenes/global/Topbar";
 import Sidebar from "./scenes/global/Sidebar";
@@ -33,6 +33,17 @@ Amplify.configure(awsExports);
 function App({ signOut, user }) {
   const [theme, colorMode] = useMode();
   const [isSidebar, setIsSidebar] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    Auth.currentAuthenticatedUser()
+      .then(() => {
+        setIsAuthenticated(true);
+      })
+      .catch(() => {
+        setIsAuthenticated(false);
+      });
+  }, []);
 
 
   return (
@@ -67,4 +78,4 @@ function App({ signOut, user }) {
 
 }
 
-export default withAuthenticator(App);
+export default App;

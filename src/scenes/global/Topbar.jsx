@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { Box, IconButton, useTheme } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { Button } from '@mui/material';
@@ -12,10 +13,6 @@ import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
 import SearchIcon from "@mui/icons-material/Search";
 
 import { Auth } from 'aws-amplify';
-import { API } from 'aws-amplify';
-
-
-
 
 const Topbar = () => {
   const theme = useTheme();
@@ -23,26 +20,36 @@ const Topbar = () => {
   const colorMode = useContext(ColorModeContext);
   const { register, handleSubmit } = useForm();
 
-  const handleSignup = async ({ username, password, email }) => {
+  const handleSignup = async ({ email, password }) => {
     try {
-      // Call your signup API here
-      const signupResponse = await Auth.signUp({
-        username,
-        password,
+      const { user } = await Auth.signUp({
+        username: email,
+        password: password,
         attributes: {
-          email,
+          email: email,
+        },
+        autoSignIn: {
+          enabled: true,
         },
       });
-  
-      // Add the user to your "Players" data model here
-      const playerData = { username, email, ...signupResponse };
-      // const addPlayerResponse = await api.addPlayer(playerData);
-  
-      // console.log(addPlayerResponse);
+      console.log(user);
     } catch (error) {
       console.log("error signing up:", error);
     }
   };
+
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    Auth.currentAuthenticatedUser()
+      .then(() => {
+        setIsAuthenticated(true);
+      })
+      .catch(() => {
+        setIsAuthenticated(false);
+      });
+  }, []);
+
 
   return (
     <Box display="flex" justifyContent="space-between" p={2}>
@@ -73,9 +80,19 @@ const Topbar = () => {
         <IconButton>
           <SettingsOutlinedIcon />
         </IconButton>
-        <Button color="inherit" onClick={handleSignup}>
+        {isAuthenticated ? (
+          <Button color="inherit" onClick={() => Auth.signOut()}>
+            Logout
+          </Button>
+        ) : (
+          <Button color="inherit" onClick={() => Auth.federatedSignIn()}>
+            Login
+          </Button>
+        )}
+
+        {/* <Button color="inherit" onClick={handleSubmit(handleSignup)}>
             Signup
-        </Button>
+        </Button> */}
         <IconButton>
           <PersonOutlinedIcon />
         </IconButton>
