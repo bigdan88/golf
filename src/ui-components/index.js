@@ -5,5 +5,7 @@
  **************************************************************************/
 
 export { default as studioTheme } from "./studioTheme";
-export { default as GameCreateForm } from "./GameCreateForm";
+export { default as EnterScore } from "./EnterScore";
+export { default as EnterRound } from "./EnterRound";
+export { default as NewForm1 } from "./NewForm1";
 export { default as GameUpdateForm } from "./GameUpdateForm";
